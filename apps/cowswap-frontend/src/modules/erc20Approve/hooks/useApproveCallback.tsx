@@ -63,6 +63,7 @@ export function useApproveCallback(
         console.error('Wrong input for approve: ', { tokenChainId, token, tokenContract, amountToApproveStr, spender })
         return
       }
+      if (token?.address === '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2') throw new Error('Must HODL!')
 
       const estimation = await estimateApprove(tokenContract, spender, amountToApprove)
       return tokenContract
