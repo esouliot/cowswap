@@ -39,17 +39,23 @@ export function useResetRecipient(onChangeRecipient: (recipient: string | null) 
   /**
    * Reset recipient whenever chainId changes
    */
+
+  const prevChainId = usePrevious(chainId)
   useEffect(() => {
+    if (prevChainId === undefined || prevChainId === chainId) return
     if (!postHooksRecipientOverride) {
       onChangeRecipient(null)
     }
-  }, [chainId, onChangeRecipient, postHooksRecipientOverride])
+  }, [chainId, prevChainId, onChangeRecipient, postHooksRecipientOverride])
 
   /**
    * Remove recipient override when its source hook was deleted
    */
   useEffect(() => {
-    const recipientOverrideWasRemoved = !postHooksRecipientOverride && recipient === prevPostHooksRecipientOverride
+    const recipientOverrideWasRemoved =
+      prevPostHooksRecipientOverride != null &&
+      !postHooksRecipientOverride &&
+      recipient === prevPostHooksRecipientOverride
 
     if (recipientOverrideWasRemoved) {
       onChangeRecipient(null)
@@ -59,11 +65,14 @@ export function useResetRecipient(onChangeRecipient: (recipient: string | null) 
   /**
    * Remove recipient when going out from hooks-store page
    */
+  const prevIsHooksTradeType = usePrevious(isHooksTradeType)
+
   useEffect(() => {
+    if (prevIsHooksTradeType === undefined || prevIsHooksTradeType === isHooksTradeType) return
     if (!isHooksTradeType) {
       onChangeRecipient(null)
     }
-  }, [isHooksTradeType, onChangeRecipient])
+  }, [isHooksTradeType, prevIsHooksTradeType, onChangeRecipient])
 
   useEffect(() => {
     if (isHooksTradeType && isNativeIn) {
